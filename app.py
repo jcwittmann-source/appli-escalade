@@ -11,112 +11,78 @@ st.markdown("""
         background-color: #ffcc00; color: black; height: 3em; width: 100%;
         border-radius: 10px; border: none; font-weight: bold; font-size: 18px;
     }
-    .hist-item { padding: 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+    .desc { font-size: 14px; color: #666; font-style: italic; margin-bottom: 10px; }
+    .log { padding: 5px; border-bottom: 1px solid #eee; font-family: monospace; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- INITIALISATION DE LA MÉMOIRE ---
+# --- MÉMOIRE DE LA SESSION ---
 if 'page' not in st.session_state:
     st.session_state.page = 'Accueil'
 if 'historique' not in st.session_state:
     st.session_state.historique = []
-if 'records' not in st.session_state:
-    st.session_state.records = {}
 
-# --- FONCTIONS OUTILS ---
-def ajouter_log(exercice):
-    heure = datetime.now().strftime("%H:%M")
-    st.session_state.historique.insert(0, f"✅ {heure} - {exercice}")
-
-def compte_a_rebours(secondes, nom_exercice):
+# --- FONCTION CHRONO + LOG ---
+def lancer_chrono(secondes, nom):
     placeholder = st.empty()
     barre = st.progress(0)
-    start_time = time.time()
     for i in range(secondes):
         restant = secondes - i
-        placeholder.metric("Chrono", f"{restant}s")
+        placeholder.metric("Temps restant", f"{restant}s")
         barre.progress((i + 1) / secondes)
         time.sleep(1)
     placeholder.empty()
     barre.empty()
-    st.success(f"Terminé : {nom_exercice}")
-    ajouter_log(nom_exercice)
+    st.success(f"Terminé : {nom}")
+    # Ajout à l'historique
+    heure = datetime.now().strftime("%H:%M")
+    st.session_state.historique.insert(0, f"{heure} - {nom} ({secondes}s)")
 
 # --- PAGES ---
 if st.session_state.page == 'Accueil':
-    st.title("🧗 Coach Perso : Suivi Perf")
+    st.title("🧗 Coach Perso : Objectif Bloc")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("💪 J1 : Traction"): st.session_state.page = 'Jour 1'; st.rerun()
-    with col2:
-        if st.button("🦵 J2 : Gainage"): st.session_state.page = 'Jour 2'; st.rerun()
-    
-    if st.button("🖐️ J3 : Bureau / Planche"):
+    if st.button("💪 ENTRAÎNEMENT 1 : Traction & Grip"):
+        st.session_state.page = 'Jour 1'; st.rerun()
+    if st.button("🦵 ENTRAÎNEMENT 2 : Gainage & Poussée"):
+        st.session_state.page = 'Jour 2'; st.rerun()
+    if st.button("🖐️ ENTRAÎNEMENT 3 : Bureau (Planche)"):
         st.session_state.page = 'Jour 3'; st.rerun()
 
     st.divider()
-    st.subheader("📊 Journal de session")
+    st.subheader("📜 Historique de la séance")
     if not st.session_state.historique:
-        st.write("Aucun exercice terminé pour le moment.")
-    for item in st.session_state.historique:
-        st.markdown(f"<div class='hist-item'>{item}</div>", unsafe_allow_html=True)
+        st.write("Rien pour l'instant. Allez, au boulot !")
+    else:
+        for item in st.session_state.historique:
+            st.markdown(f"<div class='log'>✅ {item}</div>", unsafe_allow_html=True)
 
 elif st.session_state.page == 'Jour 1':
-    st.header("💪 Entraînement 1")
-    
-    # Exercice avec suivi de perf (Répétitions)
-    st.subheader("1. Tractions (Max)")
-    perf = st.number_input("Nombre de tractions réalisées", min_value=0, step=1, key="perf_traction")
-    if st.button("Enregistrer ma perf"):
-        st.session_state.records['Tractions'] = perf
-        ajouter_log(f"Tractions : {perf} reps")
-        st.balloons()
-
-    # Exercice avec Chrono
-    st.divider()
-    st.subheader("2. Dead Hang (Suspension)")
-    if st.button("Lancer 30s de chrono"):
-        compte_a_rebours(30, "Dead Hang (30s)")
-
+    st.header("💪 Jour 1 : Dos & Bras")
+    st.subheader("1. Tractions (4 x 8)")
+    st.subheader("2. Rowing unilatéral (3 x 10)")
+    st.subheader("3. Dead Hang (3 x 30s)")
+    if st.button("Lancer Chrono 30s"):
+        lancer_chrono(30, "Dead Hang")
     if st.button("⬅️ Retour"):
         st.session_state.page = 'Accueil'; st.rerun()
 
 elif st.session_state.page == 'Jour 2':
-    st.header("🦵 Entraînement 2")
-    
-    st.subheader("1. Gobelet Squat")
-    poids = st.number_input("Poids utilisé (kg)", min_value=0, step=1)
-    if st.button("Valider la série"):
-        ajouter_log(f"Gobelet Squat : {poids}kg")
-
-    st.divider()
-    st.subheader("2. Planche dynamique")
-    if st.button("Lancer 45s de chrono"):
-        compte_a_rebours(45, "Planche (45s)")
-
+    st.header("🦵 Jour 2 : Abdos & Cuisses")
+    st.subheader("1. Gobelet Squat (4 x 12)")
+    st.subheader("2. Planche dynamique (3 x 45s)")
+    if st.button("Lancer Chrono 45s"):
+        lancer_chrono(45, "Planche dynamique")
     if st.button("⬅️ Retour"):
         st.session_state.page = 'Accueil'; st.rerun()
 
 elif st.session_state.page == 'Jour 3':
     st.header("🖐️ Entraînement 3 : Bureau")
-    
-    st.subheader("1. Suspension Planche")
-    if st.button("Lancer 15s de chrono"):
-        compte_a_rebours(15, "Suspension Bureau (15s)")
-
-    st.divider()
-    st.subheader("2. Record de tenue (Max temps)")
-    if st.button("Démarrer le chrono de performance"):
-        start = time.time()
-        stop_btn = st.button("STOP !")
-        # Note : Streamlit est un peu limité pour un chrono "live" sans bouton d'arrêt complexe
-        # On va rester simple : on enregistre quand tu as fini.
-        st.info("Chrono en cours dans ta tête... Clique sur Valider quand tu lâches !")
-    
-    duree = st.number_input("Secondes tenues :", min_value=0)
-    if st.button("Enregistrer le record"):
-        ajouter_log(f"Record Planche : {duree}s")
-
+    st.subheader("1. Suspensions Passives (4 x 15s)")
+    if st.button("Lancer Chrono 15s"):
+        lancer_chrono(15, "Suspension Passive")
+    st.subheader("2. Blocage 90° (3 x 10s)")
+    if st.button("Lancer Chrono 10s"):
+        lancer_chrono(10, "Blocage 90°")
     if st.button("⬅️ Retour"):
         st.session_state.page = 'Accueil'; st.rerun()
