@@ -7,14 +7,18 @@ st.set_page_config(page_title="Coach Escalade SNCF", layout="centered")
 # --- STYLE ---
 st.markdown("""
     <style>
+    /* Style global des boutons */
     div.stButton > button:first-child {
         background-color: #ffcc00; color: black; height: 3.5em; width: 100%;
         border-radius: 10px; border: none; font-weight: bold; font-size: 16px;
         margin-bottom: 10px;
     }
+    /* Centrage et style des descriptions */
     .desc { font-size: 14px; color: #666; font-style: italic; text-align: center; margin-bottom: 15px; }
     .log { padding: 5px; border-bottom: 1px solid #eee; font-family: monospace; font-size: 12px; }
     h1, h2, h3 { text-align: center; }
+    /* Centrage des sliders et metrics */
+    [data-testid="stMetricValue"] { text-align: center; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -48,20 +52,24 @@ def executer_exercice(secondes, nom, repos=45):
     placeholder.empty()
     st.info("Prêt pour la suite !")
 
+# --- FONCTION DE CENTRAGE DES BOUTONS ---
+def bouton_centre(label, key):
+    _, col, _ = st.columns([1, 4, 1])
+    with col:
+        return st.button(label, key=key)
+
 # --- PAGES ---
 if st.session_state.page == 'Accueil':
     st.title("🧗 Coach Perso : Objectif Bloc")
     
-    col_l, col_btn, col_r = st.columns([1, 4, 1])
-    with col_btn:
-        if st.button("💪 ENTRAÎNEMENT 1 : Dos & Bras"):
-            st.session_state.page = 'Jour 1'; st.rerun()
-        if st.button("🦵 ENTRAÎNEMENT 2 : Gainage & Poussée"):
-            st.session_state.page = 'Jour 2'; st.rerun()
-        if st.button("🖐️ ENTRAÎNEMENT 3 : Spécial Bureau"):
-            st.session_state.page = 'Jour 3'; st.rerun()
-        if st.button("🔥 ENTRAÎNEMENT 4 : Affinage Ventre"):
-            st.session_state.page = 'Jour 4'; st.rerun()
+    if bouton_centre("💪 ENTRAÎNEMENT 1 : Dos & Bras", "btn_j1"):
+        st.session_state.page = 'Jour 1'; st.rerun()
+    if bouton_centre("🦵 ENTRAÎNEMENT 2 : Gainage & Poussée", "btn_j2"):
+        st.session_state.page = 'Jour 2'; st.rerun()
+    if bouton_centre("🖐️ ENTRAÎNEMENT 3 : Spécial Bureau", "btn_j3"):
+        st.session_state.page = 'Jour 3'; st.rerun()
+    if bouton_centre("🔥 ENTRAÎNEMENT 4 : Affinage Ventre", "btn_j4"):
+        st.session_state.page = 'Jour 4'; st.rerun()
 
     st.divider()
     st.subheader("📜 Journal de session")
@@ -82,10 +90,10 @@ elif st.session_state.page == 'Jour 1':
     st.subheader("4. Dead Hang (3 x 30s)")
     st.markdown("<p class='desc'>Rester suspendu pour la force de préhension.</p>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns([1, 4, 1])
-    with c2:
-        if st.button("Démarrer Dead Hang"): executer_exercice(30, "Dead Hang", 60)
-        if st.button("⬅️ Retour"): st.session_state.page = 'Accueil'; st.rerun()
+    if bouton_centre("Démarrer Dead Hang", "run_dh"):
+        executer_exercice(30, "Dead Hang", 60)
+    if bouton_centre("⬅️ Retour", "ret_j1"):
+        st.session_state.page = 'Accueil'; st.rerun()
 
 elif st.session_state.page == 'Jour 2':
     st.header("🦵 Jour 2 : Abdos & Cuisses")
@@ -98,10 +106,10 @@ elif st.session_state.page == 'Jour 2':
     st.subheader("4. Planche dynamique (3 x 45s)")
     st.markdown("<p class='desc'>Gainage alternant appui sur les coudes et sur les mains.</p>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns([1, 4, 1])
-    with c2:
-        if st.button("Démarrer Planche"): executer_exercice(45, "Planche dynamique", 45)
-        if st.button("⬅️ Retour"): st.session_state.page = 'Accueil'; st.rerun()
+    if bouton_centre("Démarrer Planche", "run_pl"):
+        executer_exercice(45, "Planche dynamique", 45)
+    if bouton_centre("⬅️ Retour", "ret_j2"):
+        st.session_state.page = 'Accueil'; st.rerun()
 
 elif st.session_state.page == 'Jour 3':
     st.header("🖐️ Session Bureau")
@@ -116,11 +124,12 @@ elif st.session_state.page == 'Jour 3':
     st.subheader("4. Gainage suspendu (20s)")
     st.markdown("<p class='desc'>Bras tendus sur la planche, lever les jambes à 45°.</p>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns([1, 4, 1])
-    with c2:
-        if st.button("Lancer Suspension"): executer_exercice(15, f"Suspension {taille}mm", 45)
-        if st.button("Lancer Blocage"): executer_exercice(10, f"Blocage 90° {taille}mm", 60)
-        if st.button("⬅️ Retour"): st.session_state.page = 'Accueil'; st.rerun()
+    if bouton_centre("Lancer Suspension", "run_susp"):
+        executer_exercice(15, f"Suspension {taille}mm", 45)
+    if bouton_centre("Lancer Blocage", "run_bloc"):
+        executer_exercice(10, f"Blocage 90° {taille}mm", 60)
+    if bouton_centre("⬅️ Retour", "ret_j3"):
+        st.session_state.page = 'Accueil'; st.rerun()
 
 elif st.session_state.page == 'Jour 4':
     st.header("🔥 Entraînement 4 : Sangle Abdo")
@@ -133,8 +142,9 @@ elif st.session_state.page == 'Jour 4':
     st.subheader("4. Planche Latérale (2 x 30s)")
     st.markdown("<p class='desc'>Sur le coude, corps aligné. Travaille les obliques.</p>", unsafe_allow_html=True)
     
-    c1, c2, c3 = st.columns([1, 4, 1])
-    with col_btn: # Note: correction ici pour rester cohérent avec l'accueil
-        if st.button("Démarrer Hollow Body"): executer_exercice(30, "Hollow Body", 30)
-        if st.button("Démarrer Climbers"): executer_exercice(45, "Mountain Climbers", 30)
-        if st.button("⬅️ Retour"): st.session_state.page = 'Accueil'; st.rerun()
+    if bouton_centre("Démarrer Hollow Body", "run_hb"):
+        executer_exercice(30, "Hollow Body", 30)
+    if bouton_centre("Démarrer Climbers", "run_mc"):
+        executer_exercice(45, "Mountain Climbers", 30)
+    if bouton_centre("⬅️ Retour", "ret_j4"):
+        st.session_state.page = 'Accueil'; st.rerun()
