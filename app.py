@@ -105,62 +105,6 @@ if st.session_state.page == 'Accueil':
         for item in st.session_state.historique:
             st.markdown(f"<div class='log'>🚂 {item}</div>", unsafe_allow_html=True)
 
-st.set_page_config(page_title="Coach Escalade SNCF", layout="centered")
-
-# --- STYLE ---
-st.markdown("""
-    <style>
-    /* Style global des boutons */
-    div.stButton > button:first-child {
-        background-color: #ffcc00; color: black; height: 3.5em; width: 100%;
-        border-radius: 10px; border: none; font-weight: bold; font-size: 16px;
-        margin-bottom: 10px;
-    }
-    /* Centrage et style des descriptions */
-    .desc { font-size: 14px; color: #666; font-style: italic; text-align: center; margin-bottom: 15px; }
-    .log { padding: 5px; border-bottom: 1px solid #eee; font-family: monospace; font-size: 12px; }
-    h1, h2, h3 { text-align: center; }
-    /* Centrage des sliders et metrics */
-    [data-testid="stMetricValue"] { text-align: center; }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- MÉMOIRE DE LA SESSION ---
-if 'page' not in st.session_state:
-    st.session_state.page = 'Accueil'
-if 'historique' not in st.session_state:
-    st.session_state.historique = []
-
-# --- MOTEUR DE SESSION (EFFORT + REPOS) ---
-def executer_exercice(secondes, nom, repos=45):
-    placeholder = st.empty()
-    barre = st.progress(0)
-    
-    st.warning(f"⚡ ACTION : {nom}")
-    for i in range(secondes):
-        placeholder.metric("EFFORT", f"{secondes - i}s")
-        barre.progress((i + 1) / secondes)
-        time.sleep(1)
-    
-    heure = datetime.now().strftime("%H:%M")
-    st.session_state.historique.insert(0, f"{heure} - {nom} ({secondes}s)")
-    
-    st.success(f"✅ Terminé ! Repos : {repos}s")
-    barre_repos = st.progress(0)
-    for i in range(repos):
-        placeholder.metric("REPOS", f"{repos - i}s", delta="-1s", delta_color="inverse")
-        barre_repos.progress((i + 1) / repos)
-        time.sleep(1)
-    
-    placeholder.empty()
-    st.info("Prêt pour la suite !")
-
-# --- FONCTION DE CENTRAGE DES BOUTONS ---
-def bouton_centre(label, key):
-    _, col, _ = st.columns([1, 4, 1])
-    with col:
-        return st.button(label, key=key)
-
 # --- PAGES ---
 if st.session_state.page == 'Accueil':
     st.title("🧗 Coach Perso : Objectif Bloc")
