@@ -105,27 +105,6 @@ if st.session_state.page == 'Accueil':
         for item in st.session_state.historique:
             st.markdown(f"<div class='log'>🚂 {item}</div>", unsafe_allow_html=True)
 
-# --- PAGES ---
-if st.session_state.page == 'Accueil':
-    st.title("🧗 Coach Perso : Objectif Bloc")
-    
-    if bouton_centre("💪 ENTRAÎNEMENT 1 : Dos & Bras", "btn_j1"):
-        st.session_state.page = 'Jour 1'; st.rerun()
-    if bouton_centre("🦵 ENTRAÎNEMENT 2 : Gainage & Poussée", "btn_j2"):
-        st.session_state.page = 'Jour 2'; st.rerun()
-    if bouton_centre("🖐️ ENTRAÎNEMENT 3 : Spécial Bureau", "btn_j3"):
-        st.session_state.page = 'Jour 3'; st.rerun()
-    if bouton_centre("🔥 ENTRAÎNEMENT 4 : Affinage Ventre", "btn_j4"):
-        st.session_state.page = 'Jour 4'; st.rerun()
-
-    st.divider()
-    st.subheader("📜 Journal de session")
-    if not st.session_state.historique:
-        st.write("Aucun exercice validé.")
-    else:
-        for item in st.session_state.historique:
-            st.markdown(f"<div class='log'>🚂 {item}</div>", unsafe_allow_html=True)
-
 elif st.session_state.page == 'Jour 1':
     st.header("💪 Jour 1 : Dos & Bras")
     st.subheader("1. Tractions (4 x 8)")
